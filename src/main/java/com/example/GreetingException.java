@@ -1,4 +1,4 @@
-package com.example.good;
+package com.example;
 
 public class GreetingException extends Exception {
 
