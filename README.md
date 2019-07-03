@@ -4,3 +4,10 @@ https://medium.com/@senanayake.kalpa/fantastic-completablefuture-allof-and-how-t
 https://www.foreach.be/blog/parallel-and-asynchronous-programming-in-java-8
 https://www.baeldung.com/java-completablefuture
 
+
+Resolved issue:
+https://github.com/spring-projects/spring-boot/issues/15729
+
+Check out:
+
+`TaskExecutionAutoConfiguration`

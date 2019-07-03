@@ -25,7 +25,7 @@ public class AsyncService {
     @Async
     public CompletableFuture<String> greet(String language) {
         log.info("thread: {}", Thread.currentThread().getName());
-        delay(500);
+        delay(2000);
         String greeting = greetings.get(language);
         if (greeting == null) {
             throw new IllegalArgumentException("do not speak " + language);
