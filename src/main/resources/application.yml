@@ -1,4 +1,20 @@
 logging:
   level:
-    org.springframework.cache: TRACE
+    org.springframework.cache: trace
+    com.github.benmanes.caffeine: trace
+
+spring:
+  task:
+    execution:
+      pool:
+        core-size: 5
+        max-size: 25
+        queue-capacity: 100
+        # threads are reclaimed when they are idle for 10 seconds, default 60s
+        keep-alive: 10s
+
+  cache:
+    type: caffeine
+
+
 

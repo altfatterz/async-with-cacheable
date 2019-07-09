@@ -4,33 +4,35 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @Service
 @Slf4j
-public class AsyncService {
+public class ProductServiceAsync {
 
-    private Map<String, String> greetings = new HashMap<String, String>() {
+    private Map<String, BigDecimal> prices = new HashMap<String, BigDecimal>() {
         {
-            put("CH", "gruetzi");
-            put("DE", "hallo");
-            put("HU", "szia");
+            put("1", new BigDecimal(9.15));
+            put("2", new BigDecimal(52.95));
+            put("3", new BigDecimal(15.20));
         }
     };
+
 
     // the caller returns immediately upon invocation
     // the execution of the method occurs in a task that has been submitted to a Spring TaskExecutor
     @Async
-    public CompletableFuture<String> greet(String language) {
+    CompletableFuture<BigDecimal> getPrice(String productId) {
         log.info("thread: {}", Thread.currentThread().getName());
         delay(2000);
-        String greeting = greetings.get(language);
-        if (greeting == null) {
-            throw new IllegalArgumentException("do not speak " + language);
+        BigDecimal price = prices.get(productId);
+        if (price == null) {
+            throw new IllegalArgumentException("not found: " + productId);
         }
-        return CompletableFuture.completedFuture(greetings.get(language));
+        return CompletableFuture.completedFuture(price);
     }
 
     private void delay(int i) {
