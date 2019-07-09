@@ -16,15 +16,16 @@ public class AsyncWithCacheableApplicationTests {
     private ProductService productService;
 
     @Test
-    public void testHappyFlow() {
+    public void testHappyFlow() throws ProductServiceException {
         BigDecimal totalPrice = productService.getTotalPrice("1", "2", "3");
         System.out.printf("total price: %.2f\n", totalPrice);
         totalPrice = productService.getTotalPrice("1", "2", "3");
         System.out.printf("total price: %.2f\n", totalPrice);
     }
 
-    @Test
-    public void testWithException() {
+    // how to make it to expect ProductServiceException
+    @Test(expected = ProductServiceException.class)
+    public void testWithException() throws ProductServiceException {
         productService.getTotalPrice("1", "5", "3");
     }
 }

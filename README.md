@@ -4,6 +4,7 @@ https://medium.com/@senanayake.kalpa/fantastic-completablefuture-allof-and-how-t
 https://www.foreach.be/blog/parallel-and-asynchronous-programming-in-java-8
 https://www.baeldung.com/java-completablefuture
 https://dempkow.ski/blog/java-completablefuture-exception-handling/
+http://millross-consultants.com/completable-future-error-propagation.html
 
 Resolved issue:
 https://github.com/spring-projects/spring-boot/issues/15729
