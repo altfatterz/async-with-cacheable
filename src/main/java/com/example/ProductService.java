@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -42,6 +43,10 @@ public class ProductService {
                     return greetings.stream().map(completableFuture -> completableFuture.join())
                             .reduce(BigDecimal.ZERO, BigDecimal::add);
                 });
+
+        // .handle, .exceptionally - to provide default value on exception
+        // .whenComplete - stop the next chained .thenX() methods
+        // .completeExceptionally
 
         try {
             return completedWithResult.join();
