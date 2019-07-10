@@ -24,8 +24,7 @@ public class AsyncWithCacheableApplicationTests {
     }
 
     // how to make it to expect ProductServiceException
-    //@Test(expected = ProductServiceException.class)
-    @Test
+    @Test(expected = ProductServiceException.class)
     public void testWithException() throws ProductServiceException {
         productService.getTotalPrice("1", "5", "3");
     }

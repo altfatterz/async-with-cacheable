@@ -10,9 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -26,34 +25,40 @@ public class ProductService {
 
         log.info("thread: {}", Thread.currentThread().getName());
 
-        List<CompletableFuture<BigDecimal>> greetings = Arrays.stream(productIds)
+        List<CompletableFuture<BigDecimal>> priceFutures = Arrays.stream(productIds)
                 .map(productId -> productServiceAsync.getPrice(productId))
-                .collect(Collectors.toList());
+                .collect(toList());
 
-        // Returns a new CompletableFuture that is completed when all of the given CompletableFutures complete
-        // If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture also does so,
-        // with a CompletionException holding this exception as its cause
-        CompletableFuture<Void> allCompletedWithoutResult = CompletableFuture.allOf(
-                greetings.toArray(new CompletableFuture[greetings.size()]));
+        CompletableFuture<List<BigDecimal>> allCompleted = myAllOf(
+                priceFutures.toArray(new CompletableFuture[priceFutures.size()]));
 
-        // we need the results
-        CompletableFuture<BigDecimal> completedWithResult = allCompletedWithoutResult
-                .thenApply(a -> {
-                    log.info("all CompletableFutures completed successfully, thread: {}", Thread.currentThread().getName());
-                    return greetings.stream().map(completableFuture -> completableFuture.join())
-                            .reduce(BigDecimal.ZERO, BigDecimal::add);
-                });
+        CompletableFuture<BigDecimal> finalPriceFuture = allCompleted.thenApply(prices -> {
+            log.info("all CompletableFutures completed successfully, thread: {}", Thread.currentThread().getName());
+            return priceFutures.stream().map(completableFuture -> completableFuture.join())
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+        });
+
 
         // .handle, .exceptionally - to provide default value on exception
         // .whenComplete - stop the next chained .thenX() methods
         // .completeExceptionally
-
         try {
-            return completedWithResult.join();
+            return finalPriceFuture.join();
         } catch (CompletionException e) {
             throw new ProductServiceException(e.getCause().getMessage());
         }
 
+    }
+
+    public static CompletableFuture<List<BigDecimal>> myAllOf(CompletableFuture<?>... futures) {
+        // Returns a new CompletableFuture that is completed when all of the given CompletableFutures complete
+        // If any of the given CompletableFutures complete exceptionally, then the returned CompletableFuture also does so,
+        // with a CompletionException holding this exception as its cause
+        return CompletableFuture.allOf(futures)
+                .thenApply(x -> Arrays.stream(futures)
+                        .map(f -> (BigDecimal)f.join())
+                        .collect(toList())
+                );
     }
 
 }
